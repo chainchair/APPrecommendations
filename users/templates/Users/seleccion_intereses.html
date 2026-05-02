@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Selecciona tus intereses</h2>
+<p>Elige qué tipo de lugares te gustan</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar intereses</button>
+</form>
+{% endblock %}
