@@ -5,10 +5,12 @@ from .models import CustomUser, Interest
 class RegistroForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
     password_confirm = forms.CharField(widget=forms.PasswordInput, label='Confirmar contraseña')
+    username = forms.CharField(label='Nombre de usuario')
+    email = forms.EmailField(label='Correo electrónico')
     
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name']
+        fields = ['username', 'email']
     
     def clean_password_confirm(self):
         password = self.cleaned_data.get('password')
