@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Recomendador de Lugares{% endblock %}
+
+{% block content %}
+<style>
+    .banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 40px;
+    }
+    .banner h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    .banner p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    .search-bar {
+        margin-bottom: 40px;
+    }
+    .search-bar input {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    .search-bar input:focus {
+        border-color: #667eea;
+    }
+    .section {
+        margin-bottom: 50px;
+    }
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #333;
+        border-left: 5px solid #667eea;
+        padding-left: 15px;
+    }
+    .places-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .place-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .place-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+    .place-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        background-color: #f0f0f0;
+    }
+    .place-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .place-info {
+        padding: 15px;
+    }
+    .place-info h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.2rem;
+        color: #333;
+    }
+    .place-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    .place-category {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 3px 10px;
+        background-color: #667eea;
+        color: white;
+        border-radius: 15px;
+        font-size: 0.75rem;
+    }
+    .empty-message {
+        text-align: center;
+        padding: 40px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        color: #666;
+    }
+    @media (max-width: 768px) {
+        .places-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+        .banner h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<div class="search-bar">
+    <form method="get" action="#">
+        <input type="text" name="q" placeholder="Busca lugares por nombre, descripción o tipo..." disabled>
+    </form>
+    <small style="color: #999; display: block; margin-top: 5px;">Próximamente: búsqueda inteligente</small>
+</div>
+
+<div class="banner">
+    <h2>Más de 1000 experiencias en Antioquia</h2>
+    <p>Descubre los mejores lugares, restaurantes, cafés y planes para todos los gustos</p>
+</div>
+
+{% if recomendaciones_por_interes %}
+    {% for item in recomendaciones_por_interes %}
+    <div class="section">
+        <h2 class="section-title">{{ item.interes.name }}</h2>
+        <div class="places-grid">
+            {% for lugar in item.lugares %}
+            <div class="place-card">
+                {% if lugar.imagen %}
+                <div class="place-image">
+                    <img src="{{ lugar.imagen.url }}" alt="{{ lugar.nombre }}">
+                </div>
+                {% else %}
+                <div class="place-image" style="background-color: #ddd; display: flex; align-items: center; justify-content: center;">
+                    <span>Sin imagen</span>
+                </div>
+                {% endif %}
+                <div class="place-info">
+                    <h3>{{ lugar.nombre }}</h3>
+                    <p>{{ lugar.descripcion|truncatewords:15 }}</p>
+                    <span class="place-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-message">
+                <p>No hay lugares disponibles con este interés todavía.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-message">
+        <p>No tienes intereses seleccionados o no hay lugares disponibles.</p>
+        <a href="{% url 'users:seleccion_intereses' %}" style="color: #667eea;">Selecciona tus intereses aquí</a>
+    </div>
+{% endif %}
+{% endblock %}
