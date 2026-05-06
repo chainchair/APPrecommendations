@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import RegistroForm, InteresesForm
 from .models import Interest, CustomUser
+from places.models import Place
 
 def registro_view(request):
     if request.method == 'POST':
@@ -25,14 +26,14 @@ def seleccion_intereses_view(request):
     
     # Si ya tiene intereses seleccionados, redirigir a la página principal o perfil
     if request.user.interests.exists():
-        return redirect('users:inicio')  # Cambia 'inicio' por la URL de tu landing
+        return redirect('places:landing') 
     
     if request.method == 'POST':
         form = InteresesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Intereses guardados correctamente!')
-            return redirect('users:inicio')
+            return redirect('places:landing')
     else:
         form = InteresesForm(instance=request.user)
     
@@ -54,7 +55,7 @@ def login_view(request):
             user_from_db = CustomUser.objects.get(pk=user.pk)
             if not user_from_db.interests.exists():
                 return redirect('users:seleccion_intereses')
-            return redirect('users:inicio')
+            return redirect('places:landing')  
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
     return render(request, 'users/login.html')
