@@ -31,5 +31,7 @@ class InteresesForm(forms.ModelForm):
         model = CustomUser
         fields = ['interests']
         widgets = {
-            'interests': forms.CheckboxSelectMultiple(),
+            'interests': forms.CheckboxSelectMultiple(attrs={
+                'class': 'intereses-checkbox'
+            }),
         }

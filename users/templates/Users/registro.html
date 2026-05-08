@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Registro de usuario</h2>
+<div class="container container-inner">
+    <h2>Registro de usuario</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Registrarse</button>
 </form>
 <p style="text-align: center;">¿Ya tienes cuenta? <a href="{% url 'users:login' %}">Inicia sesión</a></p>
+</div>
 {% endblock %}

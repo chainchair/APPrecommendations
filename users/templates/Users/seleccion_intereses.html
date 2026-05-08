@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="intereses-container container container-inner">
 <h2 style="text-align: center;">Selecciona tus intereses</h2>
 <p style="text-align: center;">Elige qué tipo de lugares te gustan</p>
-<form method="post">
+<form method="post" style="max-width: 400px; margin: 0 auto; " >
     {% csrf_token %}
-    {{ form.as_p }}
+        <div class="intereses-grid">
+                {% for interest in todos_intereses %}
+                <div class="interes-item">
+                <label for="interest_{{ interest.id }}">{{ interest.name }}</label>
+                <input type="checkbox" name="interests" value="{{ interest.id }}" id="interest_{{ interest.id }}"
+                    {% if interest in user.interests.all %}checked{% endif %}>
+        </div>
+                {% endfor %}
+            </div>
     <button type="submit">Guardar intereses</button>
 </form>
+</div>
 {% endblock %}
