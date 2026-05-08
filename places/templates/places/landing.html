@@ -4,6 +4,18 @@
 {% block title %}Inicio - Recomendador de Lugares{% endblock %}
 
 {% block content %}
+<header>
+        <h1>Recomy</h1>
+        <nav>
+            {% if user.is_authenticated %}
+                <span>Hola, {{ user.username }}</span>
+                <a href="{% url 'users:logout' %}">Cerrar sesión</a>
+            {% else %}
+                <a href="{% url 'users:login' %}">Iniciar sesión</a>
+                <a href="{% url 'users:registro' %}">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
 <style>
     .banner {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
