@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="login-container">
-    <h2>Iniciar sesión</h2>
+    <h2 style="text-align: center;">Iniciar sesión</h2>
     
     {% if messages %}
         {% for message in messages %}
@@ -10,7 +10,7 @@
         {% endfor %}
     {% endif %}
     
-    <form method="post">
+    <form method="post" class="form ">
         {% csrf_token %}
         <div>
             <label for="username">Usuario o correo:</label>
@@ -22,7 +22,8 @@
         </div>
         <button type="submit">Iniciar sesión</button>
     </form>
-    
-    <p>¿No tienes cuenta? <a href="{% url 'users:registro' %}">Regístrate aquí</a></p>
+    <p style="text-align: center; color:#646464;">¿Aun no eres miembro?</p>
+    <hr>
+     <p style="text-align: center;"><a href="{% url 'users:registro' %}">Unete aqui</a> para tener <br>recomendaciones personalizadas</p>
 </div>
 {% endblock %}
