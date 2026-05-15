@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     #custom apps
     'users.apps.UsersConfig',
     'places',
+    'import_export',
 ]
 
 MIDDLEWARE = [

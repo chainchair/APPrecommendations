@@ -12,15 +12,24 @@ class Category(models.Model):
 class Place(models.Model):
     nombre = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
-    descripcion = models.TextField()
-    direccion = models.TextField()  # Aquí va calle, ciudad, país todo junto
+    descripcion = models.TextField(max_length=600)
+    direccion = models.TextField(max_length=200)  # Aquí va calle, ciudad, país todo junto
     imagen = models.ImageField(upload_to='places/', blank=True, null=True)
     categoria = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     intereses = models.ManyToManyField(Interest, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.nombre)
+            base_slug = slugify(self.nombre)
+            slug = base_slug
+            counter = 1
+
+            while Place.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
         super().save(*args, **kwargs)
     
     def __str__(self):
