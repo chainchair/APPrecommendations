@@ -1,6 +1,5 @@
-from django.shortcuts import render
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Place
 
@@ -25,3 +24,10 @@ def landing_view(request):
     }
     
     return render(request, 'places/landing.html', context)
+
+def place_detail_view(request, slug):
+    lugar = get_object_or_404(Place, slug=slug)
+    context = {
+        'lugar': lugar,
+    }
+    return render(request, 'places/place_detail.html', context)

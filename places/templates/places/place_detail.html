@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ lugar.nombre }} - Recomy{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Recomy</h1>
+    <nav>
+        {% if user.is_authenticated %}
+            <span>Hola, {{ user.username }}</span>
+            <a href="{% url 'users:logout' %}">Cerrar sesión</a>
+        {% else %}
+            <a href="{% url 'users:login' %}">Iniciar sesión</a>
+            <a href="{% url 'users:registro' %}">Registrarse</a>
+        {% endif %}
+    </nav>
+</header>
+
+<style>
+    /* Mismos estilos del banner, search-bar, etc. */
+    .banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 40px;
+    }
+    .banner h2 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    .banner p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #667eea;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+    .back-link:hover {
+        text-decoration: underline;
+    }
+    
+    .detail-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .detail-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        background-color: #f0f0f0;
+    }
+    
+    .detail-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .detail-info {
+        padding: 30px;
+    }
+    
+    .detail-info h1 {
+        margin: 0 0 15px 0;
+        font-size: 2rem;
+        color: #333;
+    }
+    
+    .detail-category {
+        display: inline-block;
+        padding: 5px 15px;
+        background-color: #667eea;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .detail-description {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 25px;
+    }
+    
+    .detail-address {
+        font-size: 1rem;
+        color: #777;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+    
+    .detail-address strong {
+        color: #333;
+    }
+    
+    .detail-interests {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .interest-tag {
+        padding: 4px 12px;
+        background-color: #f0f0f0;
+        color: #555;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+    
+    @media (max-width: 768px) {
+        .detail-image {
+            height: 250px;
+        }
+        .detail-info {
+            padding: 20px;
+        }
+        .detail-info h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<a href="{% url 'places:landing' %}" class="back-link">← Volver al inicio</a>
+
+<div class="detail-container">
+    {% if lugar.imagen %}
+    <div class="detail-image">
+        <img src="{{ lugar.imagen.url }}" alt="{{ lugar.nombre }}">
+    </div>
+    {% else %}
+    <div class="detail-image" style="background-color: #ddd; display: flex; align-items: center; justify-content: center;">
+        <span style="color: #999;">Sin imagen disponible</span>
+    </div>
+    {% endif %}
+    
+    <div class="detail-info">
+        <h1>{{ lugar.nombre }}</h1>
+        
+        <span class="detail-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
+        
+        <p class="detail-description">{{ lugar.descripcion }}</p>
+        
+        <div class="detail-address">
+            <strong>📍 Dirección:</strong> {{ lugar.direccion }}
+        </div>
+        
+        {% if lugar.intereses.all %}
+        <div class="detail-interests">
+            {% for interes in lugar.intereses.all %}
+            <span class="interest-tag">{{ interes.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -85,6 +85,12 @@
         height: 100%;
         object-fit: cover;
     }
+    .place-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    text-decoration: none;
+    }
     .place-info {
         padding: 15px;
     }
@@ -143,6 +149,7 @@
         <h2 class="section-title">{{ item.interes.name }}</h2>
         <div class="places-grid">
             {% for lugar in item.lugares %}
+            <a href="{% url 'places:place_detail' lugar.slug %}" class="place-card-link" style="text-decoration: none; color: inherit;">
             <div class="place-card">
                 {% if lugar.imagen %}
                 <div class="place-image">
@@ -159,6 +166,7 @@
                     <span class="place-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
                 </div>
             </div>
+            </a>
             {% empty %}
             <div class="empty-message">
                 <p>No hay lugares disponibles con este interés todavía.</p>
