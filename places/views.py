@@ -1,26 +1,39 @@
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Place
+from .ml import recomendar
 
 @login_required
 def landing_view(request):
-    # Obtener los intereses del usuario logueado
-    intereses_usuario = request.user.interests.all()
+    query = request.GET.get("q", "").strip()
+    lugares_recomendados = None
+    recomendaciones_por_interes = [] 
     
-    # Crear un diccionario donde cada interés tiene su lista de lugares
-    recomendaciones_por_interes = []
-    
-    for interes in intereses_usuario:
-        lugares = Place.objects.filter(intereses=interes)[:6]  # Máximo 6 lugares por interés
-        if lugares:
-            recomendaciones_por_interes.append({
-                'interes': interes,
-                'lugares': lugares
-            })
+    # Si hay búsqueda por texto, usar embeddings
+    if query:
+        try:
+            ids = recomendar(query, top_k=20)
+            lugares = Place.objects.filter(id__in=ids)
+            lugar_dict = {l.pk: l for l in lugares}
+            lugares_recomendados = [lugar_dict[id_] for id_ in ids if id_ in lugar_dict]
+        except Exception:
+            lugares_recomendados = []
+    else:
+        # Comportamiento original: recomendaciones por intereses
+        intereses_usuario = request.user.interests.all()
+        
+        for interes in intereses_usuario:
+            lugares = Place.objects.filter(intereses=interes)[:6]
+            if lugares:
+                recomendaciones_por_interes.append({
+                    'interes': interes,
+                    'lugares': lugares
+                })
     
     context = {
-        'recomendaciones_por_interes': recomendaciones_por_interes,
+        'query': query,
+        'lugares_recomendados': lugares_recomendados,
+        'recomendaciones_por_interes': recomendaciones_por_interes if not query else [],
     }
     
     return render(request, 'places/landing.html', context)

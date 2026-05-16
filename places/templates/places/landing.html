@@ -132,53 +132,96 @@
 </style>
 
 <div class="search-bar">
-    <form method="get" action="#">
-        <input type="text" name="q" placeholder="Busca lugares por nombre, descripción o tipo..." disabled>
+    <form method="get" action="{% url 'places:landing' %}">
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Busca lugares por nombre, descripción o tipo..." 
+            value="{{ query|default:'' }}"
+        >
     </form>
-    <small style="color: #999; display: block; margin-top: 5px;">Próximamente: búsqueda inteligente</small>
 </div>
 
 <div class="banner">
     <h2>Más de 1000 experiencias en Antioquia</h2>
     <p>Descubre los mejores lugares, restaurantes, cafés y planes para todos los gustos</p>
 </div>
-
-{% if recomendaciones_por_interes %}
-    {% for item in recomendaciones_por_interes %}
+{% if lugares_recomendados is not None %}
     <div class="section">
-        <h2 class="section-title">{{ item.interes.name }}</h2>
+        <h2 class="section-title">
+            {% if query %}Resultados para "{{ query }}"{% else %}Recomendados{% endif %}
+        </h2>
+        
+        {% if lugares_recomendados %}
         <div class="places-grid">
-            {% for lugar in item.lugares %}
-            <a href="{% url 'places:place_detail' lugar.slug %}" class="place-card-link" style="text-decoration: none; color: inherit;">
-            <div class="place-card">
-                {% if lugar.imagen %}
-                <div class="place-image">
-                    <img src="{{ lugar.imagen.url }}" alt="{{ lugar.nombre }}">
+            {% for lugar in lugares_recomendados %}
+            <a href="{% url 'places:place_detail' lugar.slug %}" class="place-card-link">
+                <div class="place-card">
+                    {% if lugar.imagen %}
+                    <div class="place-image">
+                        <img src="{{ lugar.imagen.url }}" alt="{{ lugar.nombre }}">
+                    </div>
+                    {% else %}
+                    <div class="place-image" style="background-color: #ddd; display: flex; align-items: center; justify-content: center;">
+                        <span>Sin imagen</span>
+                    </div>
+                    {% endif %}
+                    <div class="place-info">
+                        <h3>{{ lugar.nombre }}</h3>
+                        <p>{{ lugar.descripcion|truncatewords:15 }}</p>
+                        <span class="place-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
+                    </div>
                 </div>
-                {% else %}
-                <div class="place-image" style="background-color: #ddd; display: flex; align-items: center; justify-content: center;">
-                    <span>Sin imagen</span>
-                </div>
-                {% endif %}
-                <div class="place-info">
-                    <h3>{{ lugar.nombre }}</h3>
-                    <p>{{ lugar.descripcion|truncatewords:15 }}</p>
-                    <span class="place-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
-                </div>
-            </div>
             </a>
-            {% empty %}
-            <div class="empty-message">
-                <p>No hay lugares disponibles con este interés todavía.</p>
-            </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-message">
+            <p>No se encontraron lugares. Prueba con otras palabras.</p>
+        </div>
+        {% endif %}
     </div>
-    {% endfor %}
+
 {% else %}
-    <div class="empty-message">
-        <p>No tienes intereses seleccionados o no hay lugares disponibles.</p>
-        <a href="{% url 'users:seleccion_intereses' %}" style="color: #667eea;">Selecciona tus intereses aquí</a>
-    </div>
+    <!-- BLOQUE ORIGINAL DE INTERESES -->
+    {% if recomendaciones_por_interes %}
+        {% for item in recomendaciones_por_interes %}
+        <div class="section">
+            <h2 class="section-title">{{ item.interes.name }}</h2>
+            <div class="places-grid">
+                {% for lugar in item.lugares %}
+                <a href="{% url 'places:place_detail' lugar.slug %}" class="place-card-link">
+                    <div class="place-card">
+                        {% if lugar.imagen %}
+                        <div class="place-image">
+                            <img src="{{ lugar.imagen.url }}" alt="{{ lugar.nombre }}">
+                        </div>
+                        {% else %}
+                        <div class="place-image" style="background-color: #ddd; display: flex; align-items: center; justify-content: center;">
+                            <span>Sin imagen</span>
+                        </div>
+                        {% endif %}
+                        <div class="place-info">
+                            <h3>{{ lugar.nombre }}</h3>
+                            <p>{{ lugar.descripcion|truncatewords:15 }}</p>
+                            <span class="place-category">{{ lugar.categoria.name|default:"Sin categoría" }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="empty-message">
+                    <p>No hay lugares disponibles con este interés todavía.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-message">
+            <p>No tienes intereses seleccionados o no hay lugares disponibles.</p>
+            <a href="{% url 'users:seleccion_intereses' %}" style="color: #667eea;">Selecciona tus intereses aquí</a>
+        </div>
+    {% endif %}
 {% endif %}
+
 {% endblock %}
